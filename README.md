@@ -70,4 +70,4 @@ Released under the [MIT License](LICENSE) – free to use, adapt and share for y
 
 ## Contact
 
-Built by Helen Bolek. Found a bug or have a question? Please open an **Issue** on GitHub or write to `helen.bolek@rwth-aachen.de`.
+Built by Helen Bolek. Found a bug or have a question? Please open an **Issue** on GitHub or write to `helenbolek@web.de`.
