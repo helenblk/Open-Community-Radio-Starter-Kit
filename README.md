@@ -2,7 +2,7 @@
 
 A zero-cost workflow automation toolkit for independent and community radio stations, built entirely on Google Workspace (Sheets, Calendar, Gmail and Apps Script). It replaces scattered email threads, chat groups and manual spreadsheets with a small, automated system your whole team can use from the browser.
 
-You **do not** need to know how to code. The files are meant to be copied into your station's Google Workspace. The **Setup & Documentation Manual (PDF)** in the releases walks you through every step.
+You **do not** need to know how to code. The files are meant to be copied into your station's Google Workspace. The **[Setup & Documentation Manual (PDF)](Open_Community_Radio_Starter_Kit_Manual.pdf)** walks you through every step.
 
 ## What's included
 
