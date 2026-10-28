@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* =========================================================================
+       SECTION 1: PAGE GEOMETRY & GLOBAL TYPOGRAPHY
+       Forces the Google PDF renderer to mimic a LaTeX A4 document.
+       ========================================================================= */
+    @page { margin: 2.5cm; }
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 11pt;
+      line-height: 1.4;
+      color: #000;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* =========================================================================
+       SECTION 2: HEADER & TITLE FORMATTING
+       ========================================================================= */
+    table.header-table { 
+      width: 100%; 
+      border-bottom: 0.5pt solid black; 
+      margin-bottom: 20px; 
+      border-collapse: collapse; 
+    }
+    table.header-table td { padding-bottom: 5px; vertical-align: bottom; }
+    .header-left { font-weight: bold; font-size: 11pt; }
+    .header-right { text-align: right; font-weight: bold; font-size: 12pt; }
+
+    .title-block { text-align: center; margin-bottom: 25px; }
+    .title-block h1 { font-size: 16pt; font-weight: bold; margin: 0 0 5px 0; }
+    .title-block h2 { font-size: 11pt; font-weight: bold; margin: 0; }
+
+    h3 { font-size: 12pt; font-weight: bold; margin-top: 25px; margin-bottom: 10px; }
+
+    /* =========================================================================
+       SECTION 3: FORM TABLES & CHECKBOXES
+       Using strict HTML tables guarantees perfect alignment in the PDF.
+       ========================================================================= */
+    table.form-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    table.form-table td { padding: 5px 0; vertical-align: bottom; font-size: 11pt; }
+    .label-col { font-weight: bold; width: 180px; }
+    .data-col { border-bottom: 0.5pt solid black; height: 16px; }
+
+    table.check-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+    table.check-table td { vertical-align: top; padding-bottom: 5px; }
+    .box-cell { width: 25px; }
+    .box { 
+      display: inline-block; 
+      width: 12px; 
+      height: 12px; 
+      border: 0.5pt solid black; 
+      text-align: center; 
+      line-height: 12px; 
+      font-size: 9pt; 
+      font-weight: bold;
+    }
+
+    .motivation-text { border-bottom: 0.5pt solid black; padding-bottom: 2px; margin-bottom: 8px; min-height: 16px; }
+    .empty-line { border-bottom: 0.5pt solid black; height: 20px; margin-bottom: 8px; }
+
+    /* =========================================================================
+       SECTION 4: IBAN, BIC & SIGNATURE BLOCKS
+       ========================================================================= */
+    table.iban-table { border-collapse: collapse; margin-top: 5px; margin-bottom: 10px; }
+    table.iban-table td { 
+      width: 16px; 
+      height: 22px; 
+      border: 0.5pt solid black; 
+      text-align: center; 
+      font-family: "Courier New", Courier, monospace; 
+      font-size: 10pt; 
+      vertical-align: middle;
+    }
+    table.iban-table td.space { border: none; width: 8px; }
+
+    table.sig-table { width: 100%; margin-top: 40px; border-collapse: collapse; }
+    table.sig-table td { padding: 10px 0; vertical-align: bottom; }
+    .sig-label { font-weight: bold; width: 130px; }
+    .sig-line { border-bottom: 0.5pt solid black; width: 250px; }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================================
+       HTML: HEADER & DOCUMENT TITLE
+       ========================================================================= -->
+  <table class="header-table">
+    <tr>
+      <td class="header-left">Membership Form</td>
+      <td class="header-right"><?= data.legalName ?></td>
+    </tr>
+  </table>
+
+  <div class="title-block">
+    <h1>Membership Application Form</h1>
+    <h2>Supporting Member - <?= data.legalName ?></h2>
+  </div>
+
+
+  <!-- =========================================================================
+       HTML: PERSONAL & COMPANY INFORMATION
+       Dynamically switches between Individual and Commercial layouts.
+       ========================================================================= -->
+  <h3>Personal Information</h3>
+  <table class="form-table">
+    <? if (data.isCommercial) { ?>
+      <tr><td class="label-col">Company Name:</td><td class="data-col"><?= data.companyName ?></td></tr>
+      <tr><td class="label-col">Contact Person:</td><td class="data-col"><?= data.firstName ?> <?= data.lastName ?></td></tr>
+    <? } else { ?>
+      <tr><td class="label-col">Full Name:</td><td class="data-col"><?= data.firstName ?> <?= data.lastName ?></td></tr>
+    <? } ?>
+    <tr><td class="label-col">Street Address:</td><td class="data-col"><?= data.street ?></td></tr>
+    <tr><td class="label-col">ZIP / City:</td><td class="data-col"><?= data.zipCity ?></td></tr>
+    <tr><td class="label-col">Email Address:</td><td class="data-col"><?= data.email ?></td></tr>
+  </table>
+
+
+  <!-- =========================================================================
+       HTML: MEMBERSHIP TYPE & MOTIVATION
+       ========================================================================= -->
+  <h3>Membership Type</h3>
+  <table class="check-table">
+    <tr>
+      <td class="box-cell"><div class="box">X</div></td>
+      <td>I am applying as a <strong>supporting member</strong> and would like to be involved in the association and the work of <?= data.stationName ?>.</td>
+    </tr>
+  </table>
+  
+  <p style="margin-top: 15px; margin-bottom: 8px;">Are you joining as a private individual or on behalf of a business?</p>
+  <table class="check-table" style="margin-left: 15px;">
+    <tr>
+      <td class="box-cell"><div class="box"><?= data.isCommercial ? '' : 'X' ?></div></td>
+      <td>individual</td>
+    </tr>
+    <tr>
+      <td class="box-cell"><div class="box"><?= data.isCommercial ? 'X' : '' ?></div></td>
+      <td>commercial</td>
+    </tr>
+  </table>
+
+  <p style="margin-top: 15px; font-weight: bold;">Tell us briefly what motivates you to join:</p>
+  <div class="motivation-text"><?= data.motivation || '' ?></div>
+  <div class="empty-line"></div>
+  <div class="empty-line"></div>
+
+
+  <!-- =========================================================================
+       HTML: CONTRIBUTION & PAYMENT METHOD
+       ========================================================================= -->
+  <h3>Membership Contribution</h3>
+  <p>I commit to a membership contribution of: <span style="display:inline-block; width: 3cm; border-bottom: 0.5pt solid black; text-align: center; font-weight: bold;"><?= data.amountDisplay ?> €</span> (<em>Minimum: 1€</em>)</p>
+  
+  <table class="check-table" style="margin-left: 15px;">
+    <tr>
+      <td class="box-cell"><div class="box"><?= data.monthly ? 'X' : '' ?></div></td>
+      <td>monthly</td>
+    </tr>
+    <tr>
+      <td class="box-cell"><div class="box"><?= data.quarterly ? 'X' : '' ?></div></td>
+      <td>quarterly</td>
+    </tr>
+    <tr>
+      <td class="box-cell"><div class="box"><?= data.yearly ? 'X' : '' ?></div></td>
+      <td>yearly</td>
+    </tr>
+  </table>
+
+  <p style="margin-top: 15px; font-weight: bold;">Payment method:</p>
+  <table class="check-table" style="margin-left: 15px;">
+    <tr>
+      <td class="box-cell"><div class="box">X</div></td>
+      <td>SEPA direct debit (please provide IBAN below)</td>
+    </tr>
+  </table>
+
+
+  <!-- =========================================================================
+       HTML: DYNAMIC IBAN & BIC TABLES
+       Generates individual boxes for each character.
+       ========================================================================= -->
+  <p style="margin-top: 15px; margin-bottom: 5px; font-weight: bold;">IBAN:</p>
+  <table class="iban-table">
+    <tr>
+    <?
+      /* German IBANs have 22 characters, other countries up to 34 – the boxes grow with the IBAN */
+      var cleanIban = String(data.iban || '').replace(/\s+/g, '').toUpperCase();
+      var ibanLength = Math.max(22, cleanIban.length);
+      for (var i = 0; i < ibanLength; i++) {
+        var ibanChar = cleanIban.charAt(i);
+    ?>
+      <td><?= ibanChar ?></td>
+      <? if ((i + 1) % 4 === 0 && i !== ibanLength - 1) { ?><td class="space"></td><? } ?>
+    <? } ?>
+    </tr>
+  </table>
+
+  <p style="margin-top: 10px; margin-bottom: 5px; font-weight: bold;">BIC (only required for non-German accounts):</p>
+  <table class="iban-table">
+    <tr>
+    <?
+      /* BICs have 8 or 11 characters */
+      var cleanBic = String(data.bic || '').replace(/\s+/g, '').toUpperCase();
+      for (var j = 0; j < 11; j++) {
+        var bicChar = cleanBic.charAt(j);
+    ?>
+      <td><?= bicChar ?></td>
+    <? } ?>
+    </tr>
+  </table>
+
+  <table class="form-table" style="margin-top: 10px; width: auto;">
+    <tr>
+      <td style="font-weight: bold; width: 120px; border: none; padding: 0;">Name of Bank:</td>
+      <td style="border-bottom: 0.5pt solid black; width: 300px; padding: 0 0 2px 5px;"><?= data.bankName ?></td>
+    </tr>
+  </table>
+
+
+  <!-- =========================================================================
+       HTML: CONSENTS, DECLARATIONS & SIGNATURES
+       ========================================================================= -->
+  <h3>Consent and Declarations</h3>
+  <table class="check-table">
+    <tr>
+      <td class="box-cell"><div class="box"></div></td>
+      <td>I have read and accept the association’s statutes.</td>
+    </tr>
+    <tr>
+      <td class="box-cell"><div class="box"></div></td>
+      <td>I agree to the processing of my personal data in accordance with Datenschutz-Grundverordnung (DSGVO).</td>
+    </tr>
+    <tr>
+      <td class="box-cell"><div class="box">X</div></td>
+      <td>I have read and agree to the <?= data.stationName ?> <strong>Code of Conduct</strong>.</td>
+    </tr>
+    <tr>
+      <td class="box-cell"><div class="box"><?= data.receipt ? 'X' : '' ?></div></td>
+      <td>I would like to receive an annual donation receipt.</td>
+    </tr>
+    <tr>
+      <td class="box-cell"><div class="box"><?= data.mailingList ? 'X' : '' ?></div></td>
+      <td>I would like to subscribe to the <?= data.stationName ?> newsletter.</td>
+    </tr>
+  </table>
+
+
+  <!-- =========================================================================
+       HTML: SEPA DIRECT DEBIT MANDATE
+       Creditor name, address and identifier are required details of the mandate
+       (set CREDITOR_ID and CREDITOR_ADDRESS in Code.gs). An empty line means: not set yet.
+       ========================================================================= -->
+  <h3>SEPA Direct Debit Mandate</h3>
+  <table class="form-table">
+    <tr><td class="label-col">Creditor:</td><td class="data-col"><?= data.legalName ?></td></tr>
+    <tr><td class="label-col">Creditor Address:</td><td class="data-col"><?= data.creditorAddress ?></td></tr>
+    <tr><td class="label-col">Creditor Identifier:</td><td class="data-col"><?= data.creditorId ?></td></tr>
+    <tr><td class="label-col">Mandate Reference:</td><td class="data-col">will be communicated separately before the first direct debit</td></tr>
+    <tr><td class="label-col">Type of Payment:</td><td class="data-col">Recurring payment</td></tr>
+  </table>
+
+  <table class="check-table">
+    <tr>
+      <td class="box-cell"><div class="box"></div></td>
+      <td>I/we authorize <?= data.legalName ?> to collect payments from my/our account via direct debit.<br>
+      At the same time, I/we instruct my/our bank to honor the direct debits drawn by <?= data.legalName ?> from my/our account.<br><br>
+      <em>Note: I/we may request a refund of the debited amount within 8 weeks, starting from the date of the debit. The terms and conditions agreed upon with my/our bank apply.</em></td>
+    </tr>
+  </table>
+
+  <table class="sig-table">
+    <tr>
+      <td class="sig-label">Location:</td>
+      <td class="sig-line"></td>
+    </tr>
+    <tr>
+      <td class="sig-label">Date:</td>
+      <td class="sig-line"></td>
+    </tr>
+    <tr>
+      <td class="sig-label">Signature<br><span style="font-weight: normal; font-size: 9pt;">(account holder)</span></td>
+      <td class="sig-line"></td>
+    </tr>
+  </table>
+
+</body>
+</html>

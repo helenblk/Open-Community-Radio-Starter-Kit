@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Your Station Name] - Check My Dates</title>
+    <style>
+      /* =========================================================================
+         SECTION 1: CSS GLOBALS & THEME VARIABLES
+         ========================================================================= */
+      :root {
+        --bg-color: transparent;
+        --card-bg: #ffffff;
+        --text-main: #111111;
+        --text-muted: #666666;
+        --border-light: #e5e5e5;
+        --border-focus: #000000;
+      }
+
+      body { 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg-color); 
+        color: var(--text-main); 
+        margin: 0; 
+        padding: 10px; 
+        display: flex; 
+        justify-content: center;
+        line-height: 1.5;
+      }
+
+      /* =========================================================================
+         SECTION 2: TYPOGRAPHY & LAYOUT
+         ========================================================================= */
+      .container { 
+        width: 100%; 
+        max-width: 600px;         /* short search form: stays centred, but without a frame */
+        background: var(--card-bg); 
+        padding: 30px 24px; 
+        border: none;             /* no second frame inside your website's frame */
+        border-radius: 0; 
+        box-shadow: none;
+        text-align: center;
+      }
+
+      h2 { 
+        margin-top: 0; 
+        font-size: 24px; 
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      
+      p.subtitle { 
+        margin-bottom: 30px; 
+        font-size: 15px; 
+        color: var(--text-muted);
+      }
+
+      /* =========================================================================
+         SECTION 3: FORM INPUTS & BUTTONS
+         ========================================================================= */
+      input[type="email"] { 
+        width: 100%; 
+        padding: 14px 16px; 
+        box-sizing: border-box; 
+        border: 1px solid var(--border-light); 
+        border-radius: 8px; 
+        background-color: #fafafa; 
+        font-size: 15px;
+        margin-bottom: 15px;
+        transition: all 0.2s ease;
+      }
+
+      input:focus { 
+        outline: none; 
+        border-color: var(--border-focus); 
+        background-color: #fff;
+      }
+
+      button { 
+        background-color: #000; 
+        color: #fff; 
+        padding: 14px; 
+        border: none; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        font-size: 16px; 
+        font-weight: 600; 
+        width: 100%; 
+        transition: background-color 0.2s;
+      }
+
+      button:hover { background-color: #333; }
+      button:disabled { background-color: #ccc; cursor: not-allowed; }
+
+      /* =========================================================================
+         SECTION 4: RESULTS DISPLAY (Show Cards)
+         ========================================================================= */
+      #results {
+        margin-top: 30px;
+        text-align: left;
+      }
+
+      .show-card {
+        background: #fafafa;
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+
+      .show-card .date { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+      .show-card .time { color: var(--text-muted); font-size: 14px; }
+      .show-card .title { margin-top: 8px; font-size: 13px; color: #888; border-top: 1px dashed #ddd; padding-top: 8px;}
+
+      #message { margin-top: 20px; font-size: 14px; color: var(--text-muted); }
+    </style>
+  </head>
+  <body>
+    
+    <!-- =========================================================================
+         HTML: MAIN SEARCH INTERFACE
+         ========================================================================= -->
+    <div class="container">
+      <h2>Check My Next Shows</h2>
+      <p class="subtitle">Enter the email address you used to apply to see your upcoming dates.</p>
+      
+      <!-- Search Form -->
+      <form id="searchForm" onsubmit="handleSearch(event)">
+        <input type="email" id="emailInput" placeholder="hello@example.com" required>
+        <button type="submit" id="searchBtn">Find My Dates</button>
+      </form>
+      
+      <!-- Notification & Results Wrapper -->
+      <div id="message"></div>
+      <div id="results"></div>
+    </div>
+
+
+    <!-- =========================================================================
+         JAVASCRIPT: FUNCTIONALITY AND LOGIC
+         ========================================================================= -->
+    <script>
+      function handleSearch(event) {
+        /* --- 1. Prevent Default & Get DOM Elements --- */
+        // Stops the page from refreshing when clicking submit
+        event.preventDefault();
+        
+        const email = document.getElementById('emailInput').value;
+        const btn = document.getElementById('searchBtn');
+        const resultsDiv = document.getElementById('results');
+        const msgDiv = document.getElementById('message');
+        
+        /* --- 2. Update UI to Loading State --- */
+        // Changes the button text and clears previous search results
+        btn.innerText = 'Searching...';
+        btn.disabled = true;
+        resultsDiv.innerHTML = '';
+        msgDiv.innerText = '';
+
+        /* --- 3. Call Backend Function (getMyShows) --- */
+        google.script.run
+          .withSuccessHandler(function(response) {
+            
+            /* --- 4. Handle Success Response --- */
+            btn.innerText = 'Find My Dates';
+            btn.disabled = false;
+
+            // If the backend threw a specific error (e.g., invalid email)
+            if (response.error) {
+              msgDiv.innerText = response.error;
+              msgDiv.style.color = '#d93025'; // Red error text
+              return;
+            }
+
+            // If the search worked, but no shows were found
+            if (response.shows.length === 0) {
+              msgDiv.innerText = "No upcoming shows found for this email address.";
+              msgDiv.style.color = '#d93025'; // Red error text
+              return;
+            }
+
+            // If shows were found, display the success message
+            msgDiv.innerText = `Found ${response.shows.length} upcoming show(s):`;
+            msgDiv.style.color = '#1e8e3e'; // Green success text
+
+            // Loop through the data and build a visual card for each show
+            // (textContent instead of innerHTML, so a show title can never inject HTML)
+            response.shows.forEach(show => {
+              const card = document.createElement('div');
+              card.className = 'show-card';
+              appendText(card, 'date', show.date);
+              appendText(card, 'time', show.time);
+              appendText(card, 'title', 'Show: ' + show.title);
+              resultsDiv.appendChild(card);
+            });
+          })
+          .withFailureHandler(function(err) {
+            
+            /* --- 5. Handle Error/Failure --- */
+            // Triggers if the script crashes or loses internet connection
+            btn.innerText = 'Find My Dates';
+            btn.disabled = false;
+            msgDiv.innerText = "An error occurred. Please try again.";
+            msgDiv.style.color = '#d93025'; // Red error text
+          })
+          .getMyShows(email); // This sends the email to your Code.gs backend!
+      }
+
+      function appendText(parent, className, text) {
+        const div = document.createElement('div');
+        div.className = className;
+        div.textContent = text;
+        parent.appendChild(div);
+      }
+    </script>
+  </body>
+</html>

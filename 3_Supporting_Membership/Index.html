@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Your Station Name] - Supporting Membership</title>
+    <style>
+      /* =========================================================================
+         SECTION 1: CSS GLOBALS & THEME VARIABLES
+         ========================================================================= */
+      body { 
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+        background-color: transparent; 
+        color: #000; 
+        margin: 0; 
+        padding: 10px; 
+        -webkit-font-smoothing: antialiased; 
+      }
+      .container { 
+        max-width: none;          /* fills the iframe / pop-up on your website */
+        margin: 0 auto; 
+        background: #fff; 
+        padding: 20px 24px; 
+        border: none;             /* no second frame inside your website's frame */
+        border-radius: 0; 
+      }
+
+      /* =========================================================================
+         SECTION 2: TYPOGRAPHY & LAYOUT
+         ========================================================================= */
+      h1 { font-size: 28px; font-weight: 700; margin: 0 0 5px 0; letter-spacing: -0.5px; }
+      p.subtitle { color: #666; font-size: 15px; margin-top: 0; margin-bottom: 40px; }
+      h2 { 
+        font-size: 13px; 
+        text-transform: uppercase; 
+        letter-spacing: 1.2px; 
+        color: #000; 
+        margin-top: 40px; 
+        margin-bottom: 20px; 
+        border-bottom: 1px solid #000; 
+        padding-bottom: 8px; 
+      }
+      label { display: block; font-weight: 600; margin-top: 20px; margin-bottom: 8px; font-size: 13px; color: #111; }
+      
+      .name-row { display: flex; gap: 15px; }
+      .name-col { flex: 1; }
+      .name-col label { margin-top: 0; }
+      .name-wrapper { margin-top: 20px; }
+
+      /* =========================================================================
+         SECTION 3: FORM INPUTS (Text, Email, Number, Textarea)
+         ========================================================================= */
+      input[type="text"], input[type="email"], input[type="number"], textarea { 
+        width: 100%; 
+        padding: 14px 16px; 
+        border: 1px solid #ddd; 
+        border-radius: 8px; 
+        box-sizing: border-box; 
+        font-family: inherit; 
+        font-size: 15px; 
+        background-color: #fafafa; 
+        transition: all 0.2s ease; 
+      }
+      input:focus, textarea:focus { outline: none; border-color: #000; background-color: #fff; }
+
+      /* =========================================================================
+         SECTION 4: RADIO BUTTONS & CHECKBOXES
+         ========================================================================= */
+      .radio-group { display: flex; gap: 24px; margin-top: 10px; margin-bottom: 20px; }
+      .radio-group label { display: flex; align-items: center; font-weight: 400; font-size: 15px; margin: 0; cursor: pointer; }
+      .radio-group input[type="radio"] { accent-color: #000; width: 18px; height: 18px; margin-right: 8px; cursor: pointer; }
+
+      .checkbox-group { 
+        margin-top: 15px; 
+        display: flex; 
+        align-items: flex-start; 
+        background: #fcfcfc; 
+        padding: 16px; 
+        border: 1px solid #eaeaea; 
+        border-radius: 8px; 
+        transition: border-color 0.2s ease; 
+      }
+      .checkbox-group input[type="checkbox"] { margin-right: 14px; margin-top: 2px; accent-color: #000; width: 16px; height: 16px; cursor: pointer; }
+      .checkbox-group label { font-weight: 400; margin: 0; font-size: 14px; line-height: 1.5; cursor: pointer; color: #333; }
+      
+      .checkbox-link { color: #000; text-decoration: underline; font-weight: 600; cursor: pointer;}
+      .checkbox-link:hover { color: #666; }
+
+      /* =========================================================================
+         SECTION 5: BUTTONS, NOTIFICATIONS & INFO BOXES
+         ========================================================================= */
+      button { 
+        background-color: #000; 
+        color: #fff; 
+        padding: 16px; 
+        border: none; 
+        border-radius: 8px; 
+        font-size: 16px; 
+        font-weight: 600; 
+        cursor: pointer; 
+        width: 100%; 
+        margin-top: 40px; 
+        transition: background-color 0.2s ease; 
+      }
+      button:hover { background-color: #333; }
+      button:disabled { background-color: #ccc; cursor: not-allowed; }
+      
+      #message { margin-top: 20px; padding: 16px; border-radius: 8px; display: none; font-weight: 600; text-align: center; font-size: 15px; }
+      .success { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+      .error { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+      .info-box { background-color: #f8f9fa; border-left: 4px solid #000; padding: 15px; margin-top: 20px; font-size: 14px; color: #444; line-height: 1.5; }
+      
+      /* =========================================================================
+         SECTION 6: THE CODE OF CONDUCT MODAL (Pop-Up window)
+         ========================================================================= */
+      .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+      .modal-content { background-color: #fff; margin: 5% auto; padding: 40px; border-radius: 12px; width: 90%; max-width: 650px; }
+      .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; margin-top: -10px; }
+      .close-btn:hover { color: #000; text-decoration: none; }
+      
+      .modal-content h3 { font-size: 16px; margin-top: 25px; margin-bottom: 10px; }
+      .modal-content ul { margin-top: 0; padding-left: 20px; }
+      .modal-content li { margin-bottom: 8px; font-size: 14px; line-height: 1.5; }
+      .modal-content p { font-size: 14px; line-height: 1.5; }
+      
+      /* =========================================================================
+         SECTION 7: MOBILE RESPONSIVENESS
+         ========================================================================= */
+      @media (max-width: 480px) { 
+        .name-row { flex-direction: column; gap: 0; } 
+        .name-col + .name-col { margin-top: 20px; } 
+        .radio-group { flex-direction: column; gap: 12px; } 
+        .container { padding: 25px 20px; border: none; } 
+        body { padding: 0; background: #fff; } 
+        .modal-content { padding: 25px 20px; margin: 10% auto; } 
+      }
+    </style>
+  </head>
+  <body>
+    
+    <!-- =========================================================================
+         HTML: MAIN MEMBERSHIP APPLICATION FORM
+         ========================================================================= -->
+    <div class="container">
+      <h1>Membership Application</h1>
+      <p class="subtitle">Supporting Member – [Your Station Name] e.V.</p>
+
+      <form id="membershipForm" onsubmit="handleFormSubmit(event)">
+        
+        <!-- Personal / Company Info Section -->
+        <h2>Personal / Company Information</h2>
+        
+        <label>Are you joining as a private individual or on behalf of a business?</label>
+        <div class="radio-group">
+          <label><input type="radio" name="memberType" value="individual" checked required onchange="toggleCompanyField()"> Individual</label>
+          <label><input type="radio" name="memberType" value="commercial" onchange="toggleCompanyField()"> Commercial (Business)</label>
+        </div>
+
+        <!-- Hidden Company Field (Shows only if 'Commercial' is selected) -->
+        <div id="companySection" style="display: none;">
+          <label for="companyName">Company Name</label>
+          <input type="text" id="companyName" name="companyName">
+        </div>
+
+        <div class="name-wrapper name-row">
+          <div class="name-col">
+            <label id="lblFirstName" for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" required>
+          </div>
+          <div class="name-col">
+            <label id="lblLastName" for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" required>
+          </div>
+        </div>
+
+        <label for="address">Street Address</label>
+        <input type="text" id="address" name="address" required>
+
+        <label for="zipCity">ZIP / City</label>
+        <input type="text" id="zipCity" name="zipCity" required>
+
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required>
+
+        <!-- Membership Type Section -->
+        <h2>Membership Type</h2>
+        <div class="checkbox-group">
+          <input type="checkbox" id="supportingMember" required checked disabled>
+          <label for="supportingMember">I am applying as a supporting member to financially support the association and the cultural work of [Your Station Name].</label>
+        </div>
+
+        <label for="motivation">Tell us briefly what motivates you to join:</label>
+        <textarea id="motivation" name="motivation" rows="3" required></textarea>
+
+        <!-- Contribution Details -->
+        <h2>Membership Contribution</h2>
+        <label for="amount">Amount (€) - Minimum 1€</label>
+        <input type="number" id="amount" name="amount" min="1" placeholder="1" required>
+
+        <label>Payment Interval</label>
+        <div class="radio-group">
+          <label><input type="radio" name="interval" value="yearly" checked required> Yearly</label>
+          <label><input type="radio" name="interval" value="quarterly"> Quarterly</label>
+          <label><input type="radio" name="interval" value="monthly"> Monthly</label>
+        </div>
+
+        <!-- SEPA Payment Data -->
+        <h2>Payment Method (SEPA)</h2>
+        <label for="iban">IBAN</label>
+        <input type="text" id="iban" name="iban" placeholder="DE00 0000 0000 0000 0000 00" required>
+
+        <label for="bic">BIC (only required for non-German accounts)</label>
+        <input type="text" id="bic" name="bic">
+
+        <label for="bankName">Name of Bank</label>
+        <input type="text" id="bankName" name="bankName" required>
+
+        <!-- Declarations & Consents -->
+        <h2>Next Steps & Declarations</h2>
+        
+        <div class="info-box">
+          <strong>Review Process:</strong> Your application will be reviewed by our team. If accepted, you will receive an official PDF application via email. You will then have the opportunity to read our statutes and DSGVO, check the respective boxes, sign the document, and return it to us to finalize your membership.
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="coc" name="coc" required>
+          <label for="coc">I have read and agree to the <span class="checkbox-link" onclick="openModal()">[Your Station Name] Code of Conduct</span>.</label>
+        </div>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="receipt" name="receipt">
+          <label for="receipt">I would like to receive an annual donation receipt.</label>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="mailingList" name="mailingList">
+          <label for="mailingList">I would like to subscribe to the [Your Station Name] newsletter to stay updated on station news and events.</label>
+        </div>
+
+        <button type="submit" id="submitBtn">Submit Application for Review</button>
+      </form>
+
+      <!-- Dynamic Notification Area -->
+      <div id="message"></div>
+    </div>
+
+
+    <!-- =========================================================================
+         HTML: THE CODE OF CONDUCT MODAL (Hidden by default)
+         ========================================================================= -->
+    <div id="cocModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 style="margin-top: 0;">Code of Conduct for Radio Guests</h2>
+        <p>To ensure a respectful, inclusive, and smooth experience for everyone involved, we kindly ask all our guests to follow this Code of Conduct during their time on-air and on our premises.</p>
+        
+        <h3>Respect and Inclusion</h3>
+        <ul>
+          <li>Treat all staff, hosts, and fellow guests with respect - regardless of their background, identity, beliefs, or opinions.</li>
+          <li>Discriminatory, racist, sexist, homophobic, transphobic, or otherwise harmful language and behavior will not be tolerated.</li>
+        </ul>
+
+        <h3>No Hate Speech or Propaganda</h3>
+        <ul>
+          <li>Content that promotes hate, conspiracy theories, or any form of extremist ideology is strictly prohibited.</li>
+          <li>Please avoid political or religious propaganda during the broadcast unless previously agreed upon with the editorial team.</li>
+        </ul>
+
+        <h3>Language and Tone</h3>
+        <ul>
+          <li>Keep your language appropriate for a public, community-oriented broadcast.</li>
+          <li>Avoid offensive jokes, slurs, or any form of aggressive communication.</li>
+        </ul>
+
+        <h3>Substances and Conduct</h3>
+        <ul>
+          <li>Please do not smoke or consume illegal substances in the studio.</li>
+          <li>Arrive in a state fit for live recording or broadcasting.</li>
+        </ul>
+
+        <h3>Punctuality and Preparedness</h3>
+        <ul>
+          <li>Be on time and prepared for the show. Unless communicated otherwise with the host, arrive 15 minutes before your slot. If you're running late or need to cancel, please inform the host as early as possible.</li>
+        </ul>
+
+        <h3>Media Rights</h3>
+        <ul>
+          <li>By participating, you agree that your appearance may be recorded, streamed, and archived, unless explicitly stated otherwise beforehand.</li>
+        </ul>
+
+        <h3>Respect for Equipment and Space</h3>
+        <ul>
+          <li>Treat studio equipment and facilities with care.</li>
+          <li>Follow any technical or organizational instructions provided by staff or the host.</li>
+        </ul>
+
+        <h3>Data Privacy & Consent</h3>
+        <ul>
+          <li>Do not share personal data (e.g. phone numbers, private stories, names) of others on-air without their explicit consent.</li>
+          <li>Respect the privacy of all participants, including other guests, staff, and listeners.</li>
+        </ul>
+
+        <h3>Music Selection Guidelines</h3>
+        <p>We ask all hosts and guests to be mindful and responsible when selecting music for broadcast. Music is a powerful medium - please take the time to reflect on the artists you feature and the messages they convey.</p>
+        <ul>
+          <li><strong>Know your music:</strong> Please make an effort to understand the background, values, and public stance of the artists you play. If you are unsure whether a track aligns with the values of our station, we recommend not including it in your show.</li>
+          <li><strong>Language matters:</strong> If a song is in a language you do not understand, take the time to research its lyrics and context. If this is not possible, please refrain from playing it.</li>
+          <li><strong>We are non-political:</strong> As a non-political, non-commercial station, we do not broadcast politically charged music or content. Please avoid songs that contain explicit political messaging, ideologies, or calls to action.</li>
+          <li><strong>No advertising or political promotion:</strong> This includes verbal endorsements, announcements, or music that promotes political parties, demonstrations, or commercial products.</li>
+        </ul>
+        <p>Our aim is to create a respectful, open, and inclusive space for everyone - music selection plays a vital role in that. Thank you for curating your content with care and intention.</p>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+        
+        <p><em>We reserve the right to interrupt or end a broadcast and/or refuse future participation if these guidelines are violated. Thank you for your cooperation and for contributing to a respectful and safe broadcasting environment.</em></p>
+
+        <h3>Official Communication Policy</h3>
+        <p>To ensure transparency, fairness, and professionalism, all external communication regarding applications, show proposals, and participation must go through our official station email.</p>
+        <p>Please do not rely on, request, or send messages via private accounts or individual team members (e.g. social media, personal phone numbers, etc.). This ensures that no one is pressured to respond in a personal capacity and that all communication remains documented and accessible to the responsible team.</p>
+        <p>This policy helps us treat all applicants equally and maintain clear, respectful boundaries between personal and organizational communication.</p>
+      </div>
+    </div>
+
+
+    <!-- =========================================================================
+         JAVASCRIPT: FUNCTIONALITY AND LOGIC
+         ========================================================================= -->
+    <script>
+      /* --- 1. Code of Conduct Modal Logic --- */
+      var modal = document.getElementById("cocModal");
+      
+      function openModal() { 
+        modal.style.display = "block"; 
+      }
+      
+      function closeModal() { 
+        modal.style.display = "none"; 
+      }
+      
+      // Close the modal if the user clicks anywhere outside of the white content box
+      window.onclick = function(event) { 
+        if (event.target == modal) { 
+          modal.style.display = "none"; 
+        } 
+      }
+
+      /* --- 2. Dynamic Company Fields Logic --- */
+      // Triggers when the user toggles between Individual / Commercial radio buttons
+      function toggleCompanyField() {
+        const type = document.querySelector('input[name="memberType"]:checked').value;
+        const companySection = document.getElementById('companySection');
+        const companyInput = document.getElementById('companyName');
+        const lblFirst = document.getElementById('lblFirstName');
+        const lblLast = document.getElementById('lblLastName');
+        
+        if (type === 'commercial') {
+          // Show the company field and make it mandatory
+          companySection.style.display = 'block';
+          companyInput.required = true;
+          // Change the labels to indicate contact person
+          lblFirst.innerText = 'Contact Person: First Name';
+          lblLast.innerText = 'Contact Person: Last Name';
+        } else {
+          // Hide the company field and clear its data
+          companySection.style.display = 'none';
+          companyInput.required = false;
+          companyInput.value = '';
+          // Revert labels back to standard individual naming
+          lblFirst.innerText = 'First Name';
+          lblLast.innerText = 'Last Name';
+        }
+      }
+
+      /* --- 3. Handling Form Submission --- */
+      function handleFormSubmit(event) {
+        event.preventDefault(); // Stop page from refreshing
+        
+        const btn = document.getElementById('submitBtn');
+        const msgDiv = document.getElementById('message');
+        
+        // Update UI to show processing state
+        btn.disabled = true;
+        btn.innerText = 'Submitting...';
+        msgDiv.style.display = 'none';
+
+        // Package all form inputs automatically
+        const form = document.getElementById('membershipForm');
+        const data = {};
+        new FormData(form).forEach((value, key) => data[key] = value);
+        
+        // Ensure checkboxes are captured correctly as 'on' or 'off'
+        data.coc = document.getElementById('coc').checked ? 'on' : 'off';
+        data.receipt = document.getElementById('receipt').checked ? 'on' : 'off';
+        data.mailingList = document.getElementById('mailingList').checked ? 'on' : 'off';
+
+        // Send packaged data to the Google Apps Script backend (submitMembership)
+        google.script.run
+          .withSuccessHandler(function(response) {
+            if (response && response.ok) {
+              btn.style.display = 'none';
+              showMessage('success', 'Thank you! Your application has been sent for review. You will hear from us soon.');
+              form.reset();
+              toggleCompanyField(); // Reset fields visually
+            } else {
+              // The server rejected the input (e.g. invalid IBAN) – show its message
+              resetSubmitButton();
+              showMessage('error', (response && response.error) || GENERIC_ERROR);
+            }
+          })
+          .withFailureHandler(function(err) {
+            // Script crashed or connection lost
+            resetSubmitButton();
+            showMessage('error', GENERIC_ERROR);
+            console.error(err);
+          })
+          .submitMembership(data);
+      }
+
+      const GENERIC_ERROR = 'Something went wrong. Please try again or contact us at hello@yourstation.com.';
+
+      function resetSubmitButton() {
+        const btn = document.getElementById('submitBtn');
+        btn.style.display = 'block';
+        btn.disabled = false;
+        btn.innerText = 'Submit Application for Review';
+      }
+
+      function showMessage(type, text) {
+        const msgDiv = document.getElementById('message');
+        msgDiv.className = type;
+        msgDiv.textContent = text;
+        msgDiv.style.display = 'block';
+      }
+    </script>
+  </body>
+</html>

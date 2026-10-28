@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Your Station Name] - Open Call</title>
+    <style>
+      /* =========================================================================
+         SECTION 1: CSS GLOBALS & THEME VARIABLES
+         ========================================================================= */
+      :root {
+        --bg-color: transparent;
+        --card-bg: #ffffff;
+        --text-main: #111111;
+        --text-muted: #666666;
+        --border-light: #e5e5e5;
+        --border-focus: #000000;
+        --error: #d93025;
+        --success: #1e8e3e;
+      }
+
+      body { 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg-color); 
+        color: var(--text-main); 
+        margin: 0; 
+        padding: 10px; 
+        display: flex; 
+        justify-content: center;
+        line-height: 1.5;
+      }
+
+      .container { 
+        width: 100%; 
+        max-width: none;          /* fills the iframe / pop-up on your website */
+        background: var(--card-bg); 
+        padding: 20px 24px; 
+        border: none;             /* no second frame inside your website's frame */
+        border-radius: 0; 
+        box-shadow: none;
+      }
+
+      /* =========================================================================
+         SECTION 2: TYPOGRAPHY & TEXT ELEMENTS
+         ========================================================================= */
+      h2 { 
+        text-align: center; 
+        margin-top: 0; 
+        font-size: 28px; 
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        margin-bottom: 8px;
+      }
+      
+      p.subtitle { 
+        text-align: center; 
+        margin-bottom: 40px; 
+        font-size: 15px; 
+        color: var(--text-muted);
+      }
+      
+      label { 
+        display: block; 
+        font-weight: 600; 
+        margin-bottom: 6px; 
+        font-size: 14.5px; 
+        letter-spacing: 0.2px;
+      }
+      
+      .help-text { 
+        display: block; 
+        font-size: 13px; 
+        color: var(--text-muted); 
+        margin-bottom: 10px; 
+      }
+
+      /* =========================================================================
+         SECTION 3: FORM INPUTS (Text, Email, Textarea)
+         ========================================================================= */
+      .form-group { margin-bottom: 30px; }
+
+      input[type="text"], input[type="email"], input[type="tel"], textarea { 
+        width: 100%; 
+        padding: 14px 16px; 
+        box-sizing: border-box; 
+        border: 1px solid var(--border-light); 
+        border-radius: 8px; 
+        background-color: #fafafa; 
+        color: var(--text-main); 
+        font-size: 15px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+      }
+
+      input::placeholder, textarea::placeholder { color: #aaa; }
+      
+      input:focus, textarea:focus { 
+        outline: none; 
+        border-color: var(--border-focus); 
+        background-color: #fff;
+        box-shadow: 0 0 0 1px var(--border-focus);
+      }
+      
+      textarea { resize: vertical; min-height: 100px; }
+
+      /* =========================================================================
+         SECTION 4: RADIO BUTTONS & CHECKBOXES
+         ========================================================================= */
+      .checkbox-group {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 15px;
+        padding: 15px;
+        background: #fafafa;
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+      }
+      .checkbox-group input[type="checkbox"] {
+        margin-top: 3px;
+        width: 18px;
+        height: 18px;
+        accent-color: #000;
+        cursor: pointer;
+      }
+      .checkbox-group label {
+        margin-bottom: 0;
+        font-weight: 400;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .radio-group { 
+        display: flex; 
+        flex-direction: column; 
+        gap: 12px; 
+        margin-top: 10px; 
+      }
+      .radio-label { 
+        display: flex; 
+        align-items: center; 
+        gap: 10px; 
+        font-weight: 400; 
+        font-size: 15px; 
+        cursor: pointer; 
+      }
+      .radio-label input[type="radio"] { 
+        width: 18px; 
+        height: 18px; 
+        accent-color: #000; 
+        margin: 0; 
+        cursor: pointer;
+      }
+
+      /* =========================================================================
+         SECTION 5: DYNAMIC SLOT GRID (The selectable dates)
+         ========================================================================= */
+      .slot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 15px;
+        margin-top: 12px;
+      }
+
+      .slot-card {
+        background: #fff;
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 20px 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      }
+
+      .slot-card:hover { 
+        border-color: #000; 
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+      }
+      
+      .slot-card.active { 
+        background: #000; 
+        border-color: #000;
+        color: #fff; 
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      .slot-card .date { font-size: 14.5px; font-weight: 600; margin-bottom: 8px; }
+      .slot-card .slot-time { font-size: 20px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px;}
+      .slot-card .sendetag-time { font-size: 11.5px; color: var(--text-muted); font-weight: 500;}
+      
+      .slot-card.active .date { color: #fff; }
+      .slot-card.active .slot-time { color: #fff; }
+      .slot-card.active .sendetag-time { color: #ccc; }
+
+      #loadingSlots { 
+        color: var(--text-muted); 
+        text-align: center; 
+        grid-column: 1 / -1; 
+        padding: 30px; 
+        font-size: 15px;
+        background: #fafafa;
+        border-radius: 8px;
+        border: 1px dashed var(--border-light);
+      }
+
+      /* =========================================================================
+         SECTION 6: BUTTONS & NOTIFICATIONS (Success/Error Messages)
+         ========================================================================= */
+      button { 
+        background-color: #000; 
+        color: #fff; 
+        padding: 16px; 
+        border: none; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        font-size: 16px; 
+        font-weight: 600; 
+        width: 100%; 
+        transition: background-color 0.2s, transform 0.1s;
+        margin-top: 10px;
+      }
+
+      button:hover { background-color: #333; }
+      button:active { transform: scale(0.98); }
+      button:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
+
+      #successMessage, #errorMessage { 
+        margin-top: 30px; 
+        padding: 24px; 
+        border-radius: 8px; 
+        text-align: center; 
+        display: none; 
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      
+      #successMessage { border: 1px solid rgba(30, 142, 62, 0.2); color: var(--success); background: #f2fdf4; }
+      #errorMessage { border: 1px solid rgba(217, 48, 37, 0.2); color: var(--error); background: #fdf2f2; white-space: pre-line; }
+
+      /* =========================================================================
+         SECTION 7: THE CODE OF CONDUCT MODAL (Pop-Up window)
+         ========================================================================= */
+      .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1000; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        background-color: rgba(0,0,0,0.5); 
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+        border-radius: 8px;
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+      .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close-btn:hover {
+        color: black;
+      }
+      .modal-content h3 {
+        font-size: 16px;
+        margin-top: 24px;
+        margin-bottom: 8px;
+        color: #000;
+      }
+      .modal-content p, .modal-content ul {
+        font-size: 14px;
+        color: #444;
+        line-height: 1.5;
+      }
+      .modal-content ul {
+        padding-left: 20px;
+        margin-top: 0;
+      }
+      .modal-content li {
+        margin-bottom: 8px;
+      }
+
+      /* =========================================================================
+         SECTION 8: MOBILE RESPONSIVENESS
+         ========================================================================= */
+      @media (max-width: 500px) {
+        .container { padding: 30px 20px; border: none; box-shadow: none; border-radius: 0;}
+        .slot-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+        .slot-card { padding: 15px 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    
+    <!-- =========================================================================
+         HTML: MAIN APPLICATION FORM
+         ========================================================================= -->
+    <div class="container">
+      <h2>[Your Station Name]</h2>
+      <p class="subtitle">Want to play a show? Apply for an open slot below.</p>
+      
+      <form id="applicationForm" onsubmit="handleFormSubmit(event)">
+        
+        <!-- Slot Selection -->
+        <div class="form-group">
+          <label>Select an Available Slot:</label>
+          <div id="slotGrid" class="slot-grid">
+            <div id="loadingSlots">Scanning for free slots...</div>
+          </div>
+          <input type="hidden" id="selectedSlotRaw" name="slot_raw_value" required>
+        </div>
+
+        <!-- Personal Details -->
+        <div class="form-group">
+          <label for="name">Real Name</label>
+          <input type="text" id="name" name="name">
+        </div>
+
+        <div class="form-group">
+          <label for="djalias">DJ Alias / Radio Persona</label>
+          <input type="text" id="djalias" name="djalias" placeholder="DJ Soundwave">
+        </div>
+
+        <div class="form-group">
+          <label for="email">E-Mail Address</label>
+          <input type="email" id="email" name="email" required placeholder="hello@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">Please share your phone number</label>
+          <span class="help-text">(helpful in case of delays on the day of the show)</span>
+          <input type="tel" id="telephone" name="telephone" placeholder="+49 123 456789">
+        </div>
+
+        <div class="form-group">
+          <label for="instagram">What is your instagram handle</label>
+          <span class="help-text">(so we can tag you in the weekly announcement, if you like)</span>
+          <input type="text" id="instagram" name="instagram" placeholder="@yourstation">
+        </div>
+
+        <!-- Show Specifics -->
+        <div class="form-group">
+          <label for="concept">Show Concept</label>
+          <textarea id="concept" name="concept" rows="5" required placeholder="Tell us about the genre, mood, and if there are any talk elements..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="tech_support">Do you need any technical support or special setup?</label>
+          <span class="help-text">(e.g., microphone use, special devices/set up, live etc.)<br>
+          The standard setup includes 2x CDJs, 2x Turntables, and a standard DJ Mixer.</span>
+          <textarea id="tech_support" name="tech_support" rows="3" placeholder="Let us know what you need to bring your show to life..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="other_info">Other:</label>
+          <textarea id="other_info" name="other_info" rows="2" placeholder="Anything else we should know?"></textarea>
+        </div>
+
+        <!-- Acquisition Source -->
+        <div class="form-group">
+          <label>How did you find us? / How did you hear about us? *</label>
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="how_found" value="Friends" required> Friends</label>
+            <label class="radio-label"><input type="radio" name="how_found" value="Event"> Event</label>
+            <label class="radio-label"><input type="radio" name="how_found" value="Social Media"> Social Media</label>
+            <label class="radio-label"><input type="radio" name="how_found" value="Other" id="how_found_other"> Other:</label>
+            <input type="text" id="how_found_other_text" style="display:none; margin-top: 5px;" placeholder="Please specify">
+          </div>
+        </div>
+
+        <!-- Consents & Opt-Ins -->
+        <div class="checkbox-group">
+          <input type="checkbox" id="coc" name="coc" required>
+          <label for="coc">
+            I have read and agree to the 
+            <a href="#" onclick="openModal(event)" style="color: #111; text-decoration: underline; font-weight: bold;">
+              Code of Conduct
+            </a>
+          </label>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="newsletter" name="newsletter">
+          <label for="newsletter"> Add me to the mailing list for updates on station news, summer breaks, and events.</label>
+        </div>
+        
+        <div class="form-group checkbox-group" style="margin-top: 0;">
+          <input type="checkbox" id="sos_list" name="sos_list">
+          <label for="sos_list"><strong>SOS-List:</strong> Add me to the mailing list: I can jump in spontaneously if a slot opens up (1-7 days notice).</label>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" id="submitBtn">Submit Application</button>
+      </form>
+      
+      <!-- Notification Screens -->
+      <div id="successMessage"> Thank you!<br><br>Your application has been successfully sent to the studio. We will get back to you soon.</div>
+      <div id="errorMessage"></div>
+    </div>
+
+
+    <!-- =========================================================================
+         HTML: THE CODE OF CONDUCT MODAL (Hidden by default)
+         ========================================================================= -->
+    <div id="cocModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>Code of Conduct for Radio Guests</h2>
+        <p>To ensure a respectful, inclusive, and smooth experience for everyone involved, we kindly ask all our guests to follow this Code of Conduct during their time on-air and on our premises.</p>
+        
+        <h3>Respect and Inclusion</h3>
+        <ul>
+          <li>Treat all staff, hosts, and fellow guests with respect - regardless of their background, identity, beliefs, or opinions.</li>
+          <li>Discriminatory, racist, sexist, homophobic, transphobic, or otherwise harmful language and behavior will not be tolerated.</li>
+        </ul>
+
+        <h3>No Hate Speech or Propaganda</h3>
+        <ul>
+          <li>Content that promotes hate, conspiracy theories, or any form of extremist ideology is strictly prohibited.</li>
+          <li>Please avoid political or religious propaganda during the broadcast unless previously agreed upon with the editorial team.</li>
+        </ul>
+
+        <h3>Language and Tone</h3>
+        <ul>
+          <li>Keep your language appropriate for a public, community-oriented broadcast.</li>
+          <li>Avoid offensive jokes, slurs, or any form of aggressive communication.</li>
+        </ul>
+
+        <h3>Substances and Conduct</h3>
+        <ul>
+          <li>Please do not smoke or consume illegal substances in the studio.</li>
+          <li>Arrive in a state fit for live recording or broadcasting.</li>
+        </ul>
+
+        <h3>Punctuality and Preparedness</h3>
+        <ul>
+          <li>Be on time and prepared for the show. Unless communicated otherwise with the host, arrive 15 minutes before your slot. If you're running late or need to cancel, please inform the host as early as possible.</li>
+        </ul>
+
+        <h3>Media Rights</h3>
+        <ul>
+          <li>By participating, you agree that your appearance may be recorded, streamed, and archived, unless explicitly stated otherwise beforehand.</li>
+        </ul>
+
+        <h3>Respect for Equipment and Space</h3>
+        <ul>
+          <li>Treat studio equipment and facilities with care.</li>
+          <li>Follow any technical or organizational instructions provided by staff or the host.</li>
+        </ul>
+
+        <h3>Data Privacy & Consent</h3>
+        <ul>
+          <li>Do not share personal data (e.g. phone numbers, private stories, names) of others on-air without their explicit consent.</li>
+          <li>Respect the privacy of all participants, including other guests, staff, and listeners.</li>
+        </ul>
+
+        <h3>Music Selection Guidelines</h3>
+        <p>We ask all hosts and guests to be mindful and responsible when selecting music for broadcast. Music is a powerful medium - please take the time to reflect on the artists you feature and the messages they convey.</p>
+        <ul>
+          <li><strong>Know your music:</strong> Please make an effort to understand the background, values, and public stance of the artists you play. If you are unsure whether a track aligns with the values of our station, we recommend not including it in your show.</li>
+          <li><strong>Language matters:</strong> If a song is in a language you do not understand, take the time to research its lyrics and context. If this is not possible, please refrain from playing it.</li>
+          <li><strong>We are non-political:</strong> As a non-political, non-commercial station, we do not broadcast politically charged music or content. Please avoid songs that contain explicit political messaging, ideologies, or calls to action.</li>
+          <li><strong>No advertising or political promotion:</strong> This includes verbal endorsements, announcements, or music that promotes political parties, demonstrations, or commercial products.</li>
+        </ul>
+        <p>Our aim is to create a respectful, open, and inclusive space for everyone - music selection plays a vital role in that. Thank you for curating your content with care and intention.</p>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+        
+        <p><em>We reserve the right to interrupt or end a broadcast and/or refuse future participation if these guidelines are violated. Thank you for your cooperation and for contributing to a respectful and safe broadcasting environment.</em></p>
+
+        <h3>Official Communication Policy</h3>
+        <p>To ensure transparency, fairness, and professionalism, all external communication regarding applications, show proposals, and participation must go through our official station email.</p>
+        <p>Please do not rely on, request, or send messages via private accounts or individual team members (e.g. social media, personal phone numbers, etc.). This ensures that no one is pressured to respond in a personal capacity and that all communication remains documented and accessible to the responsible team.</p>
+        <p>This policy helps us treat all applicants equally and maintain clear, respectful boundaries between personal and organizational communication.</p>
+      </div>
+    </div>
+
+
+    <!-- =========================================================================
+         JAVASCRIPT: FUNCTIONALITY AND LOGIC
+         ========================================================================= -->
+    <script>
+      /* --- 1. Dynamic "Other" Text Field Logic --- */
+      // Shows the text input field only if the user selects "Other" in the radio buttons
+      document.querySelectorAll('input[name="how_found"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          const textInput = document.getElementById('how_found_other_text');
+          if (this.id === 'how_found_other') {
+            textInput.style.display = 'block';
+            textInput.required = true;
+            textInput.focus();
+          } else {
+            textInput.style.display = 'none';
+            textInput.required = false;
+          }
+        });
+      });
+
+      const DEFAULT_ERROR = 'Oops! Something went wrong.\nPlease try again or contact us directly via email: hello@yourstation.com';
+
+      /* --- 2. Loading the Free Slots (on page load and after a slot was taken) --- */
+      function loadSlots() {
+        const grid = document.getElementById('slotGrid');
+        grid.innerHTML = '';
+        grid.appendChild(makeLoadingBox('Scanning for free slots...'));
+        document.getElementById('selectedSlotRaw').value = '';
+
+        google.script.run
+          .withSuccessHandler(populateSlotGrid)
+          .withFailureHandler(function(err) {
+            document.getElementById('loadingSlots').textContent = 'Error loading slots. Please refresh.';
+            console.error(err);
+          })
+          .getAvailableSlots();
+      }
+      window.onload = loadSlots;
+
+      function makeLoadingBox(text) {
+        const box = document.createElement('div');
+        box.id = 'loadingSlots';
+        box.textContent = text;
+        return box;
+      }
+
+      /* --- 3. Building the Slot Grid Interface --- */
+      // Uses textContent instead of innerHTML, so no data can inject HTML into the page
+      function populateSlotGrid(slots) {
+        const grid = document.getElementById('slotGrid');
+        const submitBtn = document.getElementById('submitBtn');
+        grid.innerHTML = '';
+
+        if (!slots || slots.length === 0) {
+          grid.appendChild(makeLoadingBox('Currently no open slots available in the near future. Check back later!'));
+          submitBtn.disabled = true;
+          return;
+        }
+        submitBtn.disabled = false;
+
+        slots.forEach(function(slot) {
+          const card = document.createElement('div');
+          card.className = 'slot-card';
+          card.dataset.value = slot.value;
+
+          appendText(card, 'date', slot.date);
+          appendText(card, 'slot-time', slot.slotTime || 'Time unknown');
+          if (slot.sendetagTime) {
+            appendText(card, 'sendetag-time', 'Broadcast: ' + slot.sendetagTime);
+          }
+
+          card.onclick = function() {
+            selectSlot(this);
+          };
+          grid.appendChild(card);
+        });
+      }
+
+      function appendText(parent, className, text) {
+        const div = document.createElement('div');
+        div.className = className;
+        div.textContent = text;
+        parent.appendChild(div);
+      }
+
+      /* --- 4. Selecting a Slot --- */
+      // Highlights the clicked card and saves its value to the hidden input field
+      function selectSlot(clickedCard) {
+        const cards = document.querySelectorAll('.slot-card');
+        cards.forEach(card => card.classList.remove('active'));
+        clickedCard.classList.add('active');
+        document.getElementById('selectedSlotRaw').value = clickedCard.dataset.value;
+      }
+
+      /* --- 5. Handling Form Submission --- */
+      // Prevents default reload, packages the data into an object, and sends it to the backend
+      function handleFormSubmit(event) {
+        event.preventDefault();
+        
+        // Ensure a slot was clicked
+        if(!document.getElementById('selectedSlotRaw').value) {
+            alert("Please select a time slot from the grid above!");
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        const form = document.getElementById('applicationForm');
+        
+        // Update UI to show it is processing
+        btn.innerText = 'Sending...';
+        btn.disabled = true;
+        document.getElementById('errorMessage').style.display = 'none';
+
+        // Check if "Other" radio was selected and grab its text
+        let howFoundValue = document.querySelector('input[name="how_found"]:checked').value;
+        if (howFoundValue === 'Other') {
+            howFoundValue = 'Other: ' + document.getElementById('how_found_other_text').value;
+        }
+
+        // Package all form inputs into a tidy JavaScript Object
+        const formObject = {
+          slot_raw_value: document.getElementById('selectedSlotRaw').value,
+          name: document.getElementById('name').value,
+          djalias: document.getElementById('djalias').value,
+          email: document.getElementById('email').value,
+          telephone: document.getElementById('telephone').value,
+          instagram: document.getElementById('instagram').value,
+          concept: document.getElementById('concept').value,
+          tech_support: document.getElementById('tech_support').value,
+          other_info: document.getElementById('other_info').value,
+          how_found: howFoundValue,
+          coc: document.getElementById('coc').checked,
+          newsletter: document.getElementById('newsletter') ? document.getElementById('newsletter').checked : false,
+          sos_list: document.getElementById('sos_list') ? document.getElementById('sos_list').checked : false
+        };
+
+        // Send data to Google Apps Script Backend (submitApplication function)
+        google.script.run
+          .withSuccessHandler(function(response) {
+            if (response && response.ok) {
+              // On Success: Hide form and show thank you message
+              form.style.display = 'none';
+              document.querySelector('h2').style.display = 'none';
+              document.querySelector('.subtitle').style.display = 'none';
+              document.getElementById('successMessage').style.display = 'block';
+              return;
+            }
+            // The server rejected the application (e.g. slot was just taken, missing field)
+            resetSubmitButton();
+            showError((response && response.error) || DEFAULT_ERROR);
+            if (response && response.slotTaken) loadSlots();
+          })
+          .withFailureHandler(function(err) {
+            // On Error: Reset button and show error warning
+            resetSubmitButton();
+            showError(DEFAULT_ERROR);
+            console.error(err);
+          })
+          .submitApplication(formObject);
+      }
+
+      function resetSubmitButton() {
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = 'Submit Application';
+        btn.disabled = false;
+      }
+
+      function showError(message) {
+        const box = document.getElementById('errorMessage');
+        box.textContent = message;
+        box.style.display = 'block';
+      }
+
+      /* --- 6. Code of Conduct Modal Logic --- */
+      // Opens the modal when the link is clicked
+      function openModal(e) {
+        e.preventDefault(); 
+        document.getElementById("cocModal").style.display = "block";
+      }
+
+      // Closes the modal via the X button
+      function closeModal() {
+        document.getElementById("cocModal").style.display = "none";
+      }
+
+      // Closes the modal if the user clicks anywhere outside of the white box
+      window.onclick = function(event) {
+        var modal = document.getElementById("cocModal");
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>
